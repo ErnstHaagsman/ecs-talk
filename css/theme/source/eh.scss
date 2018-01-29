@@ -65,3 +65,15 @@ div.title_card {
 		margin-bottom: 1em;
 	}
 }
+
+.reveal .slides section.image {
+	height: 100%;
+	padding: 0;
+
+	img {
+		max-width: 100%;
+		max-height: 100%;
+		margin: 0;
+		border: 0;
+	}
+}
