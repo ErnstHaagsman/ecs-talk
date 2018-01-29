@@ -21,6 +21,7 @@
 
 // Override theme settings (see ../template/settings.scss)
 $mainFont: 'Lato', sans-serif;
+$mainFontSize: 48pt;
 $mainColor: #000;
 $headingFont: 'Raleway',  sans-serif;
 $headingColor: #000;
@@ -32,8 +33,11 @@ $accentMain: #A03030;
 $linkColorHover: lighten( $linkColor, 20% );
 $selectionBackgroundColor: rgba(0, 0, 0, 0.99);
 
+$heading1Size: 2.5em;
+
 .reveal .slides > section {
 	text-align: left;
+	height: 90%;
 }
 
 section.has-dark-background {
