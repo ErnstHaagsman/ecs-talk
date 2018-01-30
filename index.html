@@ -373,6 +373,150 @@
 						to start nginx as sudo.
 					</aside>
 				</section>
+
+				<section class="center">
+					<div class="title_card">
+						<h1>Amazon ECS</h1>
+					</div>
+				</section>
+
+				<section>
+					<h3>Concepts</h3>
+					<ul>
+						<li>Elastic Container Registry</li>
+						<li>Task Definition</li>
+						<li>Service</li>
+						<li>Cluster</li>
+					</ul>
+				</section>
+
+				<section>
+					<h3>Architectural Questions</h3>
+					<ul>
+						<li>Database</li>
+						<li>Load Balancing</li>
+					</ul>
+
+					<aside class="notes">
+						You could host both services in their own container, for load balancing even somewhat easy
+						(no need to solve any persistency issues). For database considerably harder (container hosts
+						are essentially ephemeral). We'll use Amazon provided versions of both.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Prerequisites</h3>
+					<ul>
+						<li>AWS Account</li>
+						<li>Key pair configured in AWS region</li>
+					</ul>
+				</section>
+
+				<section class="image">
+					<img src="img/aws_service_overview.png" alt="Overview of services">
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_architecture.png" alt="Architecture overview">
+
+					<aside class="notes">
+						Grey boxes represent containers. ECS handles both scaling up and down the ECS instances,
+						and the placement of containers on those instances.
+
+						Next: Set up cluster
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_cluster_1.png" alt="Configuring an ECS cluster">
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_cluster_2.png" alt="Configuring an ECS cluster">
+
+					<aside class="notes">
+						<ul>
+							<li>Instance type</li>
+							<li>Instance count</li>
+							<li>Key pair</li>
+						</ul>
+
+						<p>Setting up the cluster will create a VPC</p>
+						<p>Next: Container Registry</p>
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/ecr_create_repo.png" alt="Create a repository">
+				</section>
+
+				<section class="image">
+					<img src="img/ecr_push_instructions.png" alt="How to push an image to ECR">
+
+					<aside class="notes">
+						Next: RDS
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/rds_choose_engine.png" alt="RDS">
+
+					<aside class="notes">
+						Next: Test or Prod choice
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/rds_test_or_prod.png" alt="RDS options">
+				</section>
+
+				<section class="image">
+					<img src="img/rds_settings.png" alt="Configure RDS">
+				</section>
+				
+				<section class="image">
+					<img src="img/rds_complete.png" alt="RDS instance running">
+
+					<aside class="notes">
+						Note the endpoint is now available
+
+						<p>Next: Security Groups</p>
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/vpc_security_groups.png" alt="Security group overview">
+				</section>
+
+				<section class="image">
+					<img src="img/vpc_sg_rds.png" alt="Adding the inbound rule for the DB">
+
+					<aside class="notes">
+						Next: Migrate task definition
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_task_definitions_empty.png" alt="Task definition empty overview">
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_task_definitions_add_container_1.png" alt="Add task definition">
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_task_definitions_add_container_2.png" alt="Add task definition">
+
+					<aside class="notes">
+						Make sure to comma-separate parts of the command
+
+						How about seeing the output? Configure logs!
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_task_definitions_add_container_3.png" alt="Configure logging for ECS task">
+				</section>
 			</div>
 		</div>
 
