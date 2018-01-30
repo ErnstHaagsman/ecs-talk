@@ -47,6 +47,7 @@
 					<h2>The Plan</h2>
 					<ul>
 						<li>What's our application?</li>
+						<li>Where could we deploy it?</li>
 						<li>Docker & Docker-compose</li>
 						<li>Simple version on ECS</li>
 						<li>Add complexity</li>
@@ -56,6 +57,96 @@
 
 				<section class="image">
 					<img src="img/django_todo.jpg" alt="The application">
+				</section>
+
+				<section>
+					<h2>Deployment Alternatives</h2>
+					<ul>
+						<li>Heroku</li>
+						<li>VPS providers (Linode, Digital Ocean)</li>
+						<li>Amazon Lightsail</li>
+						<li>Amazon EC2</li>
+						<li>Azure</li>
+						<li>Google Kubernetes Engine</li>
+					</ul>
+
+					<aside class="notes">
+						<p>Heroku: simple but expensive</p>
+						<p>VPS: medium flexibility, API quality may not be great</p>
+						<p>Lightsail: VPS with upgrade potential</p>
+						<p>EC2: Single box, multiple boxes</p>
+						<p>Azure: like AWS, you could have a look to see if it works for you</p>
+						<p>GKE: Kubernetes makes some things easy, AWS will also offer K8s soon</p>
+					</aside>
+				</section>
+
+				<section>
+					<div class="title_card">
+						<h1>Let's get started!</h1>
+					</div>
+				</section>
+
+				<section>
+					<pre><code class="hljs bash">python manage.py runserver 0.0.0.0:8000</code></pre>
+				</section>
+
+				<section>
+					<h3>./Dockerfile</h3>
+					<pre><code data-trim>
+						FROM python:3.6
+
+						WORKDIR /app
+
+						# By copying over requirements first, we make sure that Docker will cache
+						# our installed requirements rather than reinstall them on every build
+						COPY requirements.txt /app/requirements.txt
+						RUN pip install -r requirements.txt
+
+						# Now copy in our code, and run it
+						COPY . /app
+						EXPOSE 8000
+						CMD python /app/manage.py runserver 0.0.0.0:8000
+					</code></pre>
+
+					<aside class="notes">
+						<ul>
+							<li>Containers are basically lightweight VMs</li>
+							<li>Provisioned with Dockerfile</li>
+							<li>Layers</li>
+							<li>Like git, removing a file in a later layer still big</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<h3>./docker-compose.yml</h3>
+					<pre><code data-trim>
+						version: '2'
+						services:
+						  web:
+							build: .
+							ports:
+							 - "8000:8000"
+							volumes:
+							 - .:/app
+							links:
+							 - db
+
+						  db:
+							image: "postgres:9.6"
+							ports:
+							  - "5432:5432"
+							environment:
+							  POSTGRES_PASSWORD: hunter2
+					</code></pre>
+
+					<aside class="notes">
+						<ul>
+							<li>Get things from docker hub</li>
+							<li>Their docs specify env vars</li>
+							<li>Development overrides</li>
+						</ul>
+					</aside>
 				</section>
 
 			</div>
