@@ -35,6 +35,9 @@ module.exports = function(grunt) {
 		},
 
 		sass: {
+			options: {
+				sourceMap: true
+			},
 			core: {
 				src: 'css/reveal.scss',
 				dest: 'css/reveal.css'
