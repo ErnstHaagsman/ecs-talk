@@ -25,7 +25,7 @@
 		<div class="reveal">
 			<div class="slides">
 
-				<section style="height: auto;">
+				<section class="center">
 
 					<div class="title_card">
 						<h1>Deploying a<br>Django Application <br>to Amazon ECS</h1>
@@ -105,7 +105,7 @@
 						# Now copy in our code, and run it
 						COPY . /app
 						EXPOSE 8000
-						CMD python /app/manage.py runserver 0.0.0.0:8000
+						CMD python manage.py runserver 0.0.0.0:8000
 					</code></pre>
 
 					<aside class="notes">
@@ -145,6 +145,83 @@
 							<li>Get things from docker hub</li>
 							<li>Their docs specify env vars</li>
 							<li>Development overrides</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
+					<h3>12 Factor App</h3>
+					<ul>
+						<li>Dev/prod parity</li>
+						<li>Store config in the environment</li>
+						<li>And more</li>
+					</ul>
+
+					<aside class="notes">
+						<a href="12factor.net">The Twelve Factors</a>
+					</aside>
+				</section>
+
+				<section>
+					<h3>Running locally</h3>
+					<pre><code data-trim>
+						docker-compose up --build
+					</code></pre>
+				</section>
+
+				<section class="image">
+					<video data-autoplay src="img/compose_cli_build.mp4"></video>
+				</section>
+
+				<section class="image">
+					<img src="img/compose_pycharm.jpg" alt="Configuring Docker Compose in PyCharm">
+				</section>
+
+				<section class="center">
+					<h2>Ready to go?</h2>
+					<p class="fragment">Not yet :(</p>
+
+					<aside class="notes">
+						<p>We're still using Django's built-in server</p>
+						<p>Switch to Gunicorn (or uwsgi, or anything else)</p>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Switch to Gunicorn</h2>
+					<pre><code data-trim>
+						pip install gunicorn
+						gunicorn --bind 0.0.0.0:8000 djangodocker.wsgi
+					</code></pre>
+
+					<aside class="notes">
+						Just add gunicorn to requirements.txt, and change
+						dockerfile (next slide)
+					</aside>
+				</section>
+
+				<section>
+					<h3>./Dockerfile</h3>
+					<pre><code data-trim data-noescape>
+						FROM python:3.6
+
+						WORKDIR /app
+
+						# By copying over requirements first, we make sure that Docker will cache
+						# our installed requirements rather than reinstall them on every build
+						COPY requirements.txt /app/requirements.txt
+						RUN pip install -r requirements.txt
+
+						# Now copy in our code, and run it
+						COPY . /app
+						EXPOSE 8000
+						<del>CMD python manage.py runserver 0.0.0.0:8000</del>
+						<mark>CMD gunicorn --bind 0.0.0.0:8000 djangodocker.wsgi</mark>
+					</code></pre>
+
+					<aside class="notes">
+						<ul>
+							<li>What about static files?</li>
 						</ul>
 					</aside>
 				</section>

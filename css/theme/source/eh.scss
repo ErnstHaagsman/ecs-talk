@@ -40,6 +40,11 @@ $heading1Size: 2.5em;
 	height: 90%;
 }
 
+.reveal .slides > section.center {
+	text-align: left;
+	height: auto;
+}
+
 section.has-dark-background {
 	&, h1, h2, h3, h4, h5, h6 {
 		color: #fff;
