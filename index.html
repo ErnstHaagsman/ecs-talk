@@ -686,12 +686,38 @@
 					<img src="img/vpc_sg_web.png" alt="Add inbound rule to security group">
 
 					<aside class="notes">
+						Adding it to the ECS instance SG
 						All TCP ports because we're using dynamic port binding
 					</aside>
 				</section>
 
 				<section class="image">
 					<img src="img/django_todo.jpg" alt="Victory!">
+				</section>
+
+				<section class="center">
+					<h3>Now how to create a super user?</h3>
+					<p class="fragment">ECS instances are regular EC2 instances</p>
+				</section>
+				
+				<section class="image">
+					<img src="img/vpc_sg_ssh.png" alt="ECS Security Group">
+
+					<aside class="notes">
+						Allow inbound SSH traffic
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/django_createsuperuser.png" alt="Create super user">
+
+					<aside class="notes">
+						<ul>
+							<li>Find an instance that's running a web container</li>
+							<li><code>docker ps</code> to find the container ID</li>
+							<li><code>docker exec -it &lt;ID&gt; /bin/bash</code></li>
+						</ul>
+					</aside>
 				</section>
 			</div>
 		</div>
