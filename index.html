@@ -49,9 +49,7 @@
 						<li>What's our application?</li>
 						<li>Where could we deploy it?</li>
 						<li>Docker & Docker-compose</li>
-						<li>Simple version on ECS</li>
-						<li>Add complexity</li>
-						<li>(and use some Python in the progress)</li>
+						<li>Run it on ECS</li>
 					</ul>
 				</section>
 
@@ -390,6 +388,41 @@
 					</ul>
 				</section>
 
+				<section class="image">
+					<img src="img/ecs_architecture.png" alt="Architecture overview">
+
+					<aside class="notes">
+						Grey boxes represent containers. ECS handles both scaling up and down the ECS instances,
+						and the placement of containers on those instances.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Task Definition</h3>
+					<pre><code data-trim>
+						{
+							'family': 'migrate',
+							'containerDefinitions': [{
+								'name': 'migrate',
+								'image': '846266591173.dkr.ecr.eu-central-1.amazonaws.com/'
+								         'djangotodo:latest',
+								'command': [
+									'python', 'manage.py', 'migrate'
+								],
+								'logConfiguration': {
+									'logDriver': 'awslogs',
+									'options': {
+										'awslogs-group': 'djangotodo',
+										'awslogs-region': 'eu-central-1',
+										'awslogs-stream-prefix': 'migrate'
+									}
+							},
+							'workingDirectory': '/app',
+							'memory': 256,
+						}
+					</code></pre>
+				</section>
+
 				<section>
 					<h3>Architectural Questions</h3>
 					<ul>
@@ -414,17 +447,6 @@
 
 				<section class="image">
 					<img src="img/aws_service_overview.png" alt="Overview of services">
-				</section>
-
-				<section class="image">
-					<img src="img/ecs_architecture.png" alt="Architecture overview">
-
-					<aside class="notes">
-						Grey boxes represent containers. ECS handles both scaling up and down the ECS instances,
-						and the placement of containers on those instances.
-
-						Next: Set up cluster
-					</aside>
 				</section>
 
 				<section class="image">
