@@ -362,6 +362,7 @@
 				<section class="center">
 					<h3>Not shown:</h3>
 					<p>Running as a non-root user</p>
+					<p>Reducing the image size further</p>
 
 					<aside class="notes">
 						See the repo.
@@ -369,6 +370,10 @@
 						Installing sudo, adding a user, lots of
 						mkdir and chown, giving the user the right
 						to start nginx as sudo.
+
+						'python' image is 600+ MB. By switching from
+						the python base to a Ubuntu base image, we can
+						reduce the image size from 755 MB to 230 MB.
 					</aside>
 				</section>
 
@@ -388,10 +393,29 @@
 					</ul>
 				</section>
 
+
+				<section class="image">
+					<img src="img/ecr_create_repo.png" alt="Create a repository">
+
+					<aside class="notes">
+						ECR is very simple. It's just storage for your images.
+						A docker repository is a single image with its variants and versions.
+						A collection of repositories is called a registry.
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/ecr_push_instructions.png" alt="How to push an image to ECR">
+				</section>
+
 				<section class="image">
 					<img src="img/ecs_architecture.png" alt="Architecture overview">
 
 					<aside class="notes">
+						Out of scope: multiple regions
+
+						Subnets are in different availability zones
+
 						Grey boxes represent containers. ECS handles both scaling up and down the ECS instances,
 						and the placement of containers on those instances.
 					</aside>
@@ -416,9 +440,10 @@
 										'awslogs-region': 'eu-central-1',
 										'awslogs-stream-prefix': 'migrate'
 									}
-							},
-							'workingDirectory': '/app',
-							'memory': 256,
+								},
+								'workingDirectory': '/app',
+								'memory': 256,
+							}]
 						}
 					</code></pre>
 				</section>
@@ -468,17 +493,6 @@
 					</aside>
 				</section>
 
-				<section class="image">
-					<img src="img/ecr_create_repo.png" alt="Create a repository">
-				</section>
-
-				<section class="image">
-					<img src="img/ecr_push_instructions.png" alt="How to push an image to ECR">
-
-					<aside class="notes">
-						Next: RDS
-					</aside>
-				</section>
 
 				<section class="image">
 					<img src="img/rds_choose_engine.png" alt="RDS">
