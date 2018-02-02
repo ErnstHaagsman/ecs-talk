@@ -474,12 +474,40 @@
 					<h3>Service</h3>
 					<pre><code data-trim>
 						{
+							'deploymentConfiguration': {
+								'maximumPercent': 200,
+								'minimumHealthyPercent': 50
+							},
 							'service': 'web-service',
 							'cluster': 'name-of-my-cluster',
-							'desiredCount': 2,
+							'desiredCount': 3,
 							'taskDefinition': 'web'
 						}
 					</code></pre>
+
+					<aside class="notes">
+						minimumHealthyPercent describes how many old tasks the scheduler may kill during deployment
+						before the new service is running. MaximumPercent tells the scheduler how many it needs to
+						kill.
+					</aside>
+				</section>
+				
+				<section class="image">
+					<img src="img/ecs_service_deploy_1.png" alt="Task definition for deployment">
+
+					<aside class="notes">
+						Now as described in the service definition, we want three instances
+					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/ecs_service_deploy_2.png" alt="ECS deployed tasks">
+
+					<aside class="notes">
+						ECS will automatically place the tasks, as described in the service
+
+						When one of the tasks stops, service will automatically restart
+					</aside>
 				</section>
 
 				<section>
