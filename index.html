@@ -433,15 +433,12 @@
 								'command': [
 									'python', 'manage.py', 'migrate'
 								],
-								'logConfiguration': {
-									'logDriver': 'awslogs',
-									'options': {
-										'awslogs-group': 'djangotodo',
-										'awslogs-region': 'eu-central-1',
-										'awslogs-stream-prefix': 'migrate'
+								'environment': [
+									{
+										'name': 'DATABASE_URL',
+										'value': 'postgres://user:pass@host/db'
 									}
-								},
-								'workingDirectory': '/app',
+								],
 								'memory': 256,
 							}]
 						}
@@ -450,7 +447,22 @@
 					<aside class="notes">
 						This actually isn't badly written JSON, it's a Python dict.
 						You can use the boto3 Python library to control AWS.
+
+						DATABASE_URL is supported using a third party package, not Django default
 					</aside>
+				</section>
+
+
+				<section>
+					<h3>Service</h3>
+					<pre><code data-trim>
+						{
+							'service': 'web-service',
+							'cluster': 'name-of-my-cluster',
+							'desiredCount': 2,
+							'taskDefinition': 'web'
+						}
+					</code></pre>
 				</section>
 
 				<section>
