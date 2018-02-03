@@ -608,21 +608,15 @@
 					</aside>
 				</section>
 
-				<section class="image">
-					<img src="img/ecs_task_definitions_empty.png" alt="Task definition empty overview">
-				</section>
-
-				<section class="image">
-					<img src="img/ecs_task_definitions_add_container_1.png" alt="Add task definition">
-				</section>
-
-				<section class="image">
-					<img src="img/ecs_task_definitions_add_container_2.png" alt="Add task definition">
+				<section>
+					<h3>Status</h3>
+					<p class="fragment">Working application</p>
+					<p class="fragment">Logs</p>
+					<p class="fragment">Database migration</p>
 
 					<aside class="notes">
-						Make sure to comma-separate parts of the command
-
-						How about seeing the output? Configure logs!
+						Although we now generally have a working application, it'd be nice to have logs
+						Django actually needs us to migrate the database at this point.
 					</aside>
 				</section>
 
@@ -630,10 +624,20 @@
 					<img src="img/ecs_task_definitions_add_container_3.png" alt="Configure logging for ECS task">
 
 					<aside class="notes">
-						<ul>
-							<li>Add IAM policy so ECS containers can publish logs</li>
-							<li>Add CloudWatch Logs group</li>
-						</ul>
+						Add the logging configuration to the task definition,
+						and then attach the IAM policy to the ECS role.
+					</aside>
+				</section>
+
+				<section>
+					<h3>IAM Roles</h3>
+					<p class="fragment">The CloudWatch API is an AWS API</p>
+					<p class="fragment">You need to be authenticated to use APIs</p>
+					<p class="fragment">IAM Roles are used to authenticate AWS resources</p>
+					<p class="fragment">Policies are attached to IAM Users/Roles to give them rights</p>
+
+					<aside class="notes">
+						Technically, IAM roles are attached to "trusted entities".
 					</aside>
 				</section>
 
@@ -659,6 +663,15 @@
 							]
 						}
 					</code></pre>
+				</section>
+
+				<section>
+					<h3>Attach to the ECS Role</h3>
+					<ul>
+						<li>The containers are running on ECS instances</li>
+						<li>The instance has a role</li>
+						<li>`ecsInstanceRole` is created by the Cluster wizard</li>
+					</ul>
 				</section>
 				
 				<section class="image">
