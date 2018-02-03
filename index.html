@@ -401,6 +401,21 @@
 				</section>
 
 				<section>
+					<h3>How to control AWS?</h3>
+					<ul>
+						<li>Query API</li>
+						<li>AWS Management Console</li>
+						<li>CLI</li>
+						<li>Client libraries</li>
+					</ul>
+
+					<aside class="notes">
+						Query API is straight up HTTP. Client library for Python: boto3 (or boto for those of you that
+						still use Python 2).
+					</aside>
+				</section>
+
+				<section>
 					<h3>Concepts</h3>
 					<ul>
 						<li>Elastic Container Registry</li>
@@ -492,7 +507,7 @@
 					</aside>
 				</section>
 				
-				<section class="image">
+				<section class="image" data-transition="slide-in fade-out">
 					<img src="img/ecs_service_deploy_1.png" alt="Task definition for deployment">
 
 					<aside class="notes">
@@ -500,7 +515,7 @@
 					</aside>
 				</section>
 
-				<section class="image">
+				<section class="image" data-transition="slide-in fade-out">
 					<img src="img/ecs_service_deploy_2.png" alt="ECS deployed tasks">
 
 					<aside class="notes">
@@ -522,6 +537,10 @@
 						(no need to solve any persistency issues). For database considerably harder (container hosts
 						are essentially ephemeral). We'll use Amazon provided versions of both.
 					</aside>
+				</section>
+
+				<section class="image">
+					<img src="img/layers.png" alt="Application layers">
 				</section>
 
 				<section>
