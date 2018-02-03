@@ -515,7 +515,7 @@
 					</aside>
 				</section>
 
-				<section class="image" data-transition="slide-in fade-out">
+				<section class="image" data-transition="fade-in slide-out">
 					<img src="img/ecs_service_deploy_2.png" alt="ECS deployed tasks">
 
 					<aside class="notes">
@@ -544,72 +544,66 @@
 				</section>
 
 				<section>
-					<h3>Prerequisites</h3>
+					<h3>RDS</h3>
 					<ul>
-						<li>AWS Account</li>
-						<li>Key pair configured in AWS region</li>
+						<li>You configure credentials, redundancy, etc</li>
+						<li>AWS will manage your DB instance</li>
+						<li>AWS provides an endpoint</li>
 					</ul>
 				</section>
 
 				<section class="image">
-					<img src="img/aws_service_overview.png" alt="Overview of services">
-				</section>
-
-				<section class="image">
-					<img src="img/ecs_cluster_1.png" alt="Configuring an ECS cluster">
-				</section>
-
-				<section class="image">
-					<img src="img/ecs_cluster_2.png" alt="Configuring an ECS cluster">
+					<img src="img/elb_diagram.png" alt="ELB">
 
 					<aside class="notes">
-						<ul>
-							<li>Instance type</li>
-							<li>Instance count</li>
-							<li>Key pair</li>
-						</ul>
-
-						<p>Setting up the cluster will create a VPC</p>
-						<p>Next: Container Registry</p>
+						ECS automatically registers and deregisters containers from the target group
+						Additionally, ELB does health checks.
 					</aside>
 				</section>
 
-
-				<section class="image">
-					<img src="img/rds_choose_engine.png" alt="RDS">
+				<section>
+					<h3>ELB Types</h3>
+					<ul>
+						<li>Application Load Balancer (HTTP)</li>
+						<li>Network Load Balancer (TCP)</li>
+					</ul>
 
 					<aside class="notes">
-						Next: Test or Prod choice
+						I ran into an issue with NLB routing back to the same container hosts. Solution: use
+						awsvpc for container networking. Unfortunately very restrictive, as we can only assign
+						a couple of additional virtual network adapters to our host boxes.
 					</aside>
 				</section>
 
-				<section class="image">
-					<img src="img/rds_test_or_prod.png" alt="RDS options">
-				</section>
-
-				<section class="image">
-					<img src="img/rds_settings.png" alt="Configure RDS">
-				</section>
-				
-				<section class="image">
-					<img src="img/rds_complete.png" alt="RDS instance running">
+				<section>
+					<h3>So if we...</h3>
+					<p class="fragment">Spin up an RDS database</p>
+					<p class="fragment">Create a Web ECS service, with the DB endpoint configured</p>
+					<p class="fragment">And set up ELB for that service</p>
+					<p class="fragment">Are we done?</p>
 
 					<aside class="notes">
-						Note the endpoint is now available
-
-						<p>Next: Security Groups</p>
+						Unfortunately not, AWS security!
 					</aside>
 				</section>
 
-				<section class="image">
-					<img src="img/vpc_security_groups.png" alt="Security group overview">
+				<section>
+					<h3>Security on AWS</h3>
+					<ul>
+						<li>Security Groups</li>
+						<li>IAM</li>
+					</ul>
 				</section>
 
+
 				<section class="image">
-					<img src="img/vpc_sg_rds.png" alt="Adding the inbound rule for the DB">
+					<img src="img/vpc_sg_web.png" alt="Add inbound rule to security group">
 
 					<aside class="notes">
-						Next: Migrate task definition
+						Allowing traffic from load balancer to ECS instances.
+						A Security Groups defines which traffic is allowed to go to the host
+						By default, all outbound traffic is permitted.
+						Specify origin as IP (range) or other security group.
 					</aside>
 				</section>
 
@@ -799,14 +793,6 @@
 					<img src="img/cloudwatch_web_log_after_502.png" alt="Hint">
 				</section>
 
-				<section class="image">
-					<img src="img/vpc_sg_web.png" alt="Add inbound rule to security group">
-
-					<aside class="notes">
-						Adding it to the ECS instance SG
-						All TCP ports because we're using dynamic port binding
-					</aside>
-				</section>
 
 				<section class="image">
 					<img src="img/django_todo.jpg" alt="Victory!">
