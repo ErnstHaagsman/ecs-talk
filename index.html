@@ -691,6 +691,10 @@
 					<h3>Now how to create a super user?</h3>
 					<p class="fragment">ECS instances are regular EC2 instances</p>
 					<p class="fragment">No magic. Just connect with SSH.</p>
+
+					<aside class="notes">
+						Make sure to configure the key pair when creating the cluster though!
+					</aside>
 				</section>
 				
 				<section class="image">
@@ -714,6 +718,131 @@
 
 						<p>If non-interactive: create task definition</p>
 					</aside>
+				</section>
+
+				<section>
+					<h3>How to push a new version?</h3>
+					<p class="fragment">Run ECR commands to push a new image</p>
+					<p class="fragment">Create new revision of task definition</p>
+					<p class="fragment">Update service</p>
+					<p class="fragment">Let's do this with Python</p>
+				</section>
+
+				<section>
+					<h3>AWS API Authentication</h3>
+					<pre><code data-trim>
+						aws configure
+
+						# creates ~/.aws/credentials
+					</code></pre>
+
+					<aside class="notes">
+						Make sure to use an IAM user. Ideally with the least amount of privileges.
+					</aside>
+				</section>
+
+				<section>
+					<h3>deploy.ps1</h3>
+					<pre><code data-trim>
+						if (git status --porcelain) {
+							Write-Host Worktree not clean, commit all changes before deploying
+							Exit 1
+						}
+
+						$commit = git rev-parse --short HEAD
+
+						Invoke-Expression -Command (aws ecr get-login --no-include-email --region eu-central-1)
+
+						docker build -t djangotodo .
+
+						docker tag djangotodo:latest 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:latest
+
+						docker tag djangotodo:latest 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:$commit
+
+						docker push 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:latest
+						docker push 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:$commit
+					</code></pre>
+
+					<aside class="notes">
+						These are basically just the commands from the ECR page.
+						This is PowerShell, which I'm using on Windows. Same thing in Bash
+						would be very similar.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Deploy Script</h3>
+					<pre><code data-trim>
+						subprocess.run(['powershell.exe', '.\deploy.ps1'])
+
+						ecs_client = boto3.client('ecs')
+
+						ecs_client.register_task_definition(
+							family='web',
+							containerDefinitions=[
+								...
+							]
+						)
+
+						ecs_client.update_service(
+							service='web-service',
+							cluster='clustername',
+							desiredCount=2,
+							taskDefinition='web'
+						)
+					</code></pre>
+
+					<aside class="notes">
+						Abbreviated example. It makes sense to check the state at some places for a production
+						version. Also, import statements.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Container Definition</h3>
+					<pre><code data-trim>
+						{
+							'name': 'web',
+							'image': '846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:latest',
+							'portMappings': [
+							{
+								'containerPort': 8000,
+								'hostPort': 0,
+								'protocol': 'tcp'
+							}],
+							'logConfiguration': {
+								'logDriver': 'awslogs',
+								'options': {
+									'awslogs-group': 'djangotodo',
+									'awslogs-region': 'eu-central-1',
+									'awslogs-stream-prefix': 'web'
+								}
+							},
+							'environment': [ ... ],
+							'memory': 256,
+						}
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Environment</h3>
+					<pre><code data-trim>
+						[
+							{
+								'name': 'DB_HOST',
+								'value': 'djangotodo.fbuvek2gj.eu-central-1.rds.amazonaws.com'
+							},
+							{
+								'name': 'DB_USER',
+								'value': 'postgres'
+							},
+							{
+								'name': 'DB_PASSWORD',
+								'value': 'hunter2'
+							},
+							...
+						]
+					</code></pre>
 				</section>
 			</div>
 		</div>
