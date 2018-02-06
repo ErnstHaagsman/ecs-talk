@@ -844,6 +844,90 @@
 						]
 					</code></pre>
 				</section>
+
+				<section class="center">
+					<div class="title_card">
+						<h1>Service Discovery</h1>
+					</div>
+				</section>
+
+				<section>
+					<h3>Let's add Celery</h3>
+					<p class="fragment">Celery allows us to schedule tasks</p>
+					<p class="fragment">Works with queue</p>
+				</section>
+
+				<section class="image">
+					<img src="img/arch_queue.png" alt="Architecture with Celery">
+
+					<aside class="notes">
+						The problem: our 'queue' task gets placed somewhere by ECS
+						and we don't know its IP (and port if we dynamically assign it) :(.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Service Discovery</h3>
+					<p>DNS</p>
+					<p>Consul</p>
+					<p>Etcd</p>
+				</section>
+
+				<section>
+					<h3>DNS: Route 53</h3>
+					<p class="fragment">Internally, any domain name can be used</p>
+					<p class="fragment">No ELB-style integration with ECS</p>
+					<p class="fragment">We can glue it together ourselves with Lambda</p>
+				</section>
+
+				<section>
+					<h3>Lambda</h3>
+					<p class="fragment">"serverless"</p>
+					<p class="fragment">Just a Python script</p>
+					<p class="fragment">Triggered with CloudWatch Events</p>
+					<p class="fragment">Uses IAM role to be able to use APIs</p>
+
+					<aside class="notes">
+						CloudWatch has task started and task stopped events. Unfortunately, the task stopped
+						isn't fired when you kill the ECS instance. Better to just recreate the correct DNS
+						record on any change.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Lambda (pseudo) code</h3>
+					<pre><code data-trim>
+						container_ips = {}
+
+						container_list = get_containers(task)
+								host_ip = get_ecs_instance_ip(cluster_arn=cluster_arn,
+								                              ecs_instance_arn=instance_arn)
+
+								for container in container_list:
+									dns_name = container.name + '.' + DNS_ZONE + '.'
+
+									if dns_name not in container_ips:
+										container_ips[dns_name] = set()
+
+									if container.last_status == ContainerStatus.RUNNING:
+										container_ips[dns_name].add(host_ip)
+
+						# Update DNS records for all containers
+						for dns_name in container_ips:
+							print(f'Updating {dns_name}, new IPs: {container_ips[dns_name]}')
+							update_zone(dns_name, container_ips[dns_name])
+					</code></pre>
+
+					<aside class="notes">
+						Actual code is a 'little' longer. But this is the core.
+					</aside>
+				</section>
+
+				<section class="center">
+					<div class="title_card">
+						<h1>Questions?</h1>
+					</div>
+				</section>
 			</div>
 		</div>
 
