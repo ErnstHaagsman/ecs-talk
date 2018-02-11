@@ -185,8 +185,9 @@
 				</section>
 
 				<section class="center">
-					<h2>Ready to go?</h2>
-					<p class="fragment">Not yet :(</p>
+					<h2>Django Development Server</h2>
+
+					<q class="fragment">DO NOT USE THIS SERVER IN A PRODUCTION SETTING</q>
 
 					<aside class="notes">
 						<p>We're still using Django's built-in server</p>
@@ -502,6 +503,8 @@
 					</code></pre>
 
 					<aside class="notes">
+						<strong>Load balancing is also configured on the service!</strong>
+
 						minimumHealthyPercent describes how many old tasks the scheduler may kill during deployment
 						before the new service is running. MaximumPercent tells the scheduler how many it needs to
 						kill.
@@ -537,6 +540,9 @@
 						You could host both services in their own container, for load balancing even somewhat easy
 						(no need to solve any persistency issues). For database considerably harder (container hosts
 						are essentially ephemeral). We'll use Amazon provided versions of both.
+
+						Load balancing is needed if you want smooth version changes, even if you're only running
+						a single container.
 					</aside>
 				</section>
 
@@ -577,22 +583,9 @@
 				</section>
 
 				<section>
-					<h3>So if we...</h3>
-					<p class="fragment">Spin up an RDS database</p>
-					<p class="fragment">Create a Web ECS service, with the DB endpoint configured</p>
-					<p class="fragment">And set up ELB for that service</p>
-					<p class="fragment">Are we done?</p>
-
-					<aside class="notes">
-						Unfortunately not, AWS security!
-					</aside>
-				</section>
-
-				<section>
 					<h3>Security on AWS</h3>
 					<ul>
 						<li>Security Groups</li>
-						<li>IAM</li>
 					</ul>
 				</section>
 
@@ -688,7 +681,8 @@
 				</section>
 
 				<section class="center">
-					<h3>Now how to create a super user?</h3>
+					<h3>Now how to run manage.py tasks?</h3>
+					<p class="fragment">Create a custom task, or:</p>
 					<p class="fragment">ECS instances are regular EC2 instances</p>
 					<p class="fragment">No magic. Just connect with SSH.</p>
 
@@ -744,23 +738,14 @@
 				<section>
 					<h3>deploy.ps1</h3>
 					<pre><code data-trim>
-						if (git status --porcelain) {
-							Write-Host Worktree not clean, commit all changes before deploying
-							Exit 1
-						}
-
-						$commit = git rev-parse --short HEAD
-
 						Invoke-Expression -Command (aws ecr get-login --no-include-email --region eu-central-1)
 
 						docker build -t djangotodo .
 
-						docker tag djangotodo:latest 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:latest
-
-						docker tag djangotodo:latest 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:$commit
+						docker tag djangotodo:latest \
+							846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:latest
 
 						docker push 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:latest
-						docker push 846266591173.dkr.ecr.eu-central-1.amazonaws.com/djangotodo:$commit
 					</code></pre>
 
 					<aside class="notes">
