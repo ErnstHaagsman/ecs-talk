@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Django on ECS</title>
+		<title>Dockerizing Django</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/eh.css">
@@ -66,24 +66,47 @@
 					<h2>What is Docker?</h2>
 				</section>
 
+				<section class="image">
+					<img src="img/vm_vs_container.png" alt="VMs vs Containers">
+				</section>
+
+				<section class="image">
+					<img src="img/install_fail.PNG" alt="Problems">
+
+					<aside class="notes">
+						<ul>
+							<li>Packaging your app with dependencies prevents this</li>
+							<li>Reproducible (dependencies in Dockerfile)</li>
+						</ul>
+					</aside>
+				</section>
+
 				<section>
-					<h2>Deployment Alternatives</h2>
+					<h3>12 Factor App</h3>
 					<ul>
-						<li>Heroku</li>
-						<li>VPS providers (Linode, Digital Ocean)</li>
-						<li>Amazon Lightsail</li>
-						<li>Amazon EC2</li>
-						<li>Azure</li>
-						<li>Google Kubernetes Engine</li>
+						<li>Dev/prod parity</li>
+						<li>Store config in the environment</li>
+						<li>And more</li>
 					</ul>
 
 					<aside class="notes">
-						<p>Heroku: simple but expensive</p>
-						<p>VPS: medium flexibility, API quality may not be great</p>
-						<p>Lightsail: VPS with upgrade potential</p>
-						<p>EC2: Single box, multiple boxes</p>
-						<p>Azure: like AWS, you could have a look to see if it works for you</p>
-						<p>GKE: Kubernetes makes some things easy, AWS will also offer K8s soon</p>
+						<a href="12factor.net">The Twelve Factors</a>
+					</aside>
+				</section>
+
+				<section>
+					<h2>Deployment Alternatives</h2>
+					<ul>
+						<li>Amazon ECS / EKS</li>
+						<li>Google Kubernetes Engine</li>
+						<li>VPS providers (EC2, Azure, Linode, Digital Ocean)</li>
+						<li>Heroku</li>
+					</ul>
+
+					<aside class="notes">
+						<p>Docker hosting is easy: your container is a 'universal executable'</p>
+						<p>You can roll your own Docker hosting with any VPS provider. Easy for simple cases.</p>
+						<p>For complex cases Kubernetes is becoming the standard</p>
 					</aside>
 				</section>
 
@@ -157,19 +180,6 @@
 							<li>Their docs specify env vars</li>
 							<li>Development overrides</li>
 						</ul>
-					</aside>
-				</section>
-
-				<section>
-					<h3>12 Factor App</h3>
-					<ul>
-						<li>Dev/prod parity</li>
-						<li>Store config in the environment</li>
-						<li>And more</li>
-					</ul>
-
-					<aside class="notes">
-						<a href="12factor.net">The Twelve Factors</a>
 					</aside>
 				</section>
 
