@@ -54,6 +54,28 @@
 				</section>
 
 				<section>
+					<h2>A Python web application</h2>
+				</section>
+
+				<section>
+					<h3>basic.py</h3>
+					<pre><code data-trim>
+						from flask import Flask
+						app = Flask(__name__)
+
+						@app.route('/')
+						def hello_world():
+							return 'Hello, World!'
+					</code></pre>
+
+					<aside class="notes">
+						<ul>
+							<li>It's Flask, but the concept is similar</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section>
 					<h2>What is Docker?</h2>
 				</section>
 
