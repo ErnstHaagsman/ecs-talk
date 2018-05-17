@@ -133,16 +133,34 @@
 
 					<aside class="notes">
 						<ul>
-							<li>Containers are basically lightweight VMs</li>
-							<li>Provisioned with Dockerfile</li>
-							<li>Layers</li>
-							<li>Like git, removing a file in a later layer still big</li>
+							<li>The Dockerfile builds the 'machine', the compose file runs it</li>
+							<li>The container has its own isolated filesystem</li>
+							<li>COPY copies from the local filesystem, to the container</li>
 						</ul>
 					</aside>
 				</section>
 
-				<section class="image">
-					<img src="img/arch_basic.png" alt="Architecture">
+				<section data-background="img/layers_FROM.png"></section>
+
+				<section data-background="img/docker_hub.png"></section>
+
+				<section data-background="img/layers_COPY_reqs.png"></section>
+
+				<section data-background="img/layers_RUN.png"></section>
+
+				<section data-background="img/layers_COPY_app.png"></section>
+
+				<section data-background="img/layers_CMD.png"></section>
+
+				<section data-background="img/docker_build_run.png">
+				</section>
+
+				<section data-background="img/arch_basic.png">
+					<aside class="notes">
+						<ul>
+							<li>Web and DB run in different containers</li>
+						</ul>
+					</aside>
 				</section>
 
 				<section>
@@ -189,18 +207,6 @@
 
 				<section data-background="img/compose_pycharm.png">
 				</section>
-
-				<section data-background="img/layers_FROM.png"></section>
-
-				<section data-background="img/docker_hub.png"></section>
-
-				<section data-background="img/layers_COPY_reqs.png"></section>
-
-				<section data-background="img/layers_RUN.png"></section>
-
-				<section data-background="img/layers_COPY_app.png"></section>
-
-				<section data-background="img/layers_CMD.png"></section>
 
 				<section class="center">
 					<div class="title_card">
