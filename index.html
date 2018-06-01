@@ -411,6 +411,7 @@
 					<h3>Not shown:</h3>
 					<p>Running as a non-root user</p>
 					<p>Reducing the image size further</p>
+					<p>Ensure that all logging is to stdout</p>
 
 					<aside class="notes">
 						See the repo.
@@ -422,6 +423,9 @@
 						'python' image is 600+ MB. By switching from
 						the python base to a Ubuntu base image, we can
 						reduce the image size from 755 MB to 230 MB.
+
+						Make sure in your config files that both nginx
+						and gunicorn log to stdout.
 					</aside>
 				</section>
 
