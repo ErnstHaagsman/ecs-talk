@@ -59,6 +59,10 @@
 
 				<section data-background="img/whale.png"></section>
 
+				<section data-background="img/historic_shipping.png"></section>
+
+				<section data-background="img/containers.png"></section>
+
 				<section data-background="img/vm_vs_container.png">
 					<!--<img src="img/vm_vs_container.png" alt="VMs vs Containers">-->
 				</section>
@@ -75,19 +79,6 @@
 				</section>
 
 				<section>
-					<h3>12 Factor App</h3>
-					<ul>
-						<li>Dev/prod parity</li>
-						<li>Store config in the environment</li>
-						<li>And more</li>
-					</ul>
-
-					<aside class="notes">
-						<a href="12factor.net">The Twelve Factors</a>
-					</aside>
-				</section>
-
-				<section>
 					<h2>Deployment Alternatives</h2>
 					<ul>
 						<li>Amazon ECS / EKS</li>
@@ -100,6 +91,19 @@
 						<p>Docker hosting is easy: your container is a 'universal executable'</p>
 						<p>You can roll your own Docker hosting with any VPS provider. Easy for simple cases.</p>
 						<p>For complex cases Kubernetes is becoming the standard</p>
+					</aside>
+				</section>
+
+				<section>
+					<h3>12 Factor App</h3>
+					<ul>
+						<li>Dev/prod parity</li>
+						<li>Store config in the environment</li>
+						<li>And more</li>
+					</ul>
+
+					<aside class="notes">
+						<a href="12factor.net">The Twelve Factors</a>
 					</aside>
 				</section>
 
@@ -208,237 +212,11 @@
 				<section data-background="img/compose_pycharm.png">
 				</section>
 
-				<section class="center">
-					<div class="title_card">
-						<h1>Upgrading to Production</h1>
-					</div>
-				</section>
-
-				<section class="center">
-					<h2>Django Development Server</h2>
-
-					<q class="fragment">DO NOT USE THIS SERVER IN A PRODUCTION SETTING</q>
-
-					<aside class="notes">
-						<p>We're still using Django's built-in server</p>
-						<p>Switch to Gunicorn (or uwsgi, or anything else)</p>
-					</aside>
-				</section>
-
 				<section>
-					<h2>Switch to Gunicorn</h2>
-					<pre><code data-trim>
-						pip install gunicorn
-						gunicorn --bind 0.0.0.0:8000 djangodocker.wsgi
-					</code></pre>
-
-					<aside class="notes">
-						Just add gunicorn to requirements.txt, and change
-						dockerfile (next slide)
-					</aside>
-				</section>
-
-				<section>
-					<h3>./Dockerfile</h3>
-					<pre><code data-trim data-noescape>
-						FROM python:3.6
-
-						WORKDIR /app
-
-						# By copying over requirements first, we make sure that Docker will cache
-						# our installed requirements rather than reinstall them on every build
-						COPY requirements.txt /app/requirements.txt
-						RUN pip install -r requirements.txt
-
-						# Now copy in our code, and run it
-						COPY . /app
-						EXPOSE 8000
-						<del>CMD python manage.py runserver 0.0.0.0:8000</del>
-						<mark>CMD gunicorn --bind 0.0.0.0:8000 djangodocker.wsgi</mark>
-					</code></pre>
-
-					<aside class="notes">
-						<ul>
-							<li>What about static files?</li>
-						</ul>
-					</aside>
-				</section>
-
-				<section>
-					<h3>Nginx</h3>
-					<p>Serve static files</p>
-					<p>Reverse proxy Django</p>
-				</section>
-
-				<section class="image">
-					<img src="img/arch_separate_nginx.png" alt="Nginx separated">
-				</section>
-
-				<section>
-					<h3>Nginx on same container?</h3>
+					<h2>To conclude</h2>
 					<ul>
-						<li>Load balancing</li>
-						<li>Unix socket</li>
-						<li>Is the load uneven?</li>
+						<li>Docker is cool</li>
 					</ul>
-
-					<aside class="notes">
-						Separate is difficult because you'd need to
-						load balance twice.
-						Same container allows use of unix socket.
-						Argument for separate would be highly unequal
-						load.
-					</aside>
-				</section>
-
-				<section class="image">
-					<img src="img/arch_basic.png" alt="Nginx on web container">
-				</section>
-
-				<section>
-					<h3>Add nginx</h3>
-					<pre><code data-trim data-noescape>
-						FROM python:3.6<mark>-jessie</mark>
-
-						WORKDIR /app
-
-						<mark>RUN apt-get update && apt-get install --no-install-recommends -y nginx \
-							&& rm -rf /var/lib/apt/lists/*</mark>
-
-						# By copying over requirements first, we make sure that Docker will cache
-						# our installed requirements rather than reinstall them on every build
-						COPY requirements.txt /app/requirements.txt
-						RUN pip install -r requirements.txt
-
-						<mark>COPY nginx.conf /etc/nginx/nginx.conf
-						RUN python -u manage.py collectstatic</mark>
-
-						# Now copy in our code, and run it
-						COPY . /app
-						EXPOSE 8000
-						<mark>CMD nginx && gunicorn --bind unix:/tmp/gunicorn.sock djangodocker.wsgi</mark>
-					</code></pre>
-
-					<aside class="notes">
-						Complex apt statement, because we need to clean
-						up after ourselves (or the image gets YUGE)
-
-						We need the collectstatic because we now need to
-						put static files in the right place for nginx
-					</aside>
-				</section>
-
-				<section>
-					<h3>nginx.conf</h3>
-					<pre><code data-trim>
-						http {
-
-							upstream app_server {
-								# fail_timeout=0 means we always retry an upstream even if it failed
-								# to return a good HTTP response for UNIX domain socket setups
-								server unix:/tmp/gunicorn.sock fail_timeout=0;
-							}
-
-							server {
-								listen 8000 deferred;
-
-								location /static/ {
-								  root /var/www;
-								}
-
-								location / {
-								  proxy_pass http://app_server;
-								}
-							}
-						}
-					</code></pre>
-
-					<aside class="notes">
-						This is an excerpt. See the repo for more.
-					</aside>
-				</section>
-
-				<section>
-					<h3>settings.py</h3>
-					<pre><code data-trim>
-						SECRET_KEY = os.environ['SECRET_KEY']
-
-						_debug = os.environ.get('DEBUG', '0')
-						DEBUG = _debug == '1'  # only switch on debug if the DEBUG env var is '1'
-
-						ALLOWED_HOSTS = [os.environ['HOST']]
-
-						DATABASES = {
-							'default': {
-								'ENGINE': 'django.db.backends.postgresql',
-								'NAME': os.environ['DB_NAME'],
-								'USER': os.environ['DB_USER'],
-								'PASSWORD': os.environ['DB_PASSWORD'],
-								'HOST': os.environ['DB_HOST']
-							}
-						}
-
-						STATIC_ROOT = '/var/www/static'
-					</code></pre>
-
-					<aside class="notes">
-						os.environ will raise KeyError if an env var is
-						unset. What is the problem here?
-						Remember collectstatic?
-					</aside>
-				</section>
-
-				<section>
-					<h3>Dockerfile</h3>
-					<pre><code data-trim data-noescape>
-						...
-
-						COPY requirements.txt /app/requirements.txt
-						RUN pip install -r requirements.txt
-
-						ENV SECRET_KEY=INSECURE_PLACEHOLDER \
-							HOST='*' \
-							DB_HOST='PLACEHOLDER' \
-							DB_NAME='PLACEHOLDER' \
-							DB_USER='PLACEHOLDER' \
-							DB_PASSWORD='PLACEHOLDER'
-
-						...
-					</code></pre>
-				</section>
-
-				<section class="center">
-					<h3>Not shown:</h3>
-					<p>Running as a non-root user</p>
-					<p>Reducing the image size further</p>
-					<p>Ensure that all logging is to stdout</p>
-
-					<aside class="notes">
-						See the repo.
-
-						Installing sudo, adding a user, lots of
-						mkdir and chown, giving the user the right
-						to start nginx as sudo.
-
-						'python' image is 600+ MB. By switching from
-						the python base to a Ubuntu base image, we can
-						reduce the image size from 755 MB to 230 MB.
-
-						Make sure in your config files that both nginx
-						and gunicorn log to stdout.
-					</aside>
-				</section>
-
-				<section data-background="img/django_todo.jpg">
-					<aside class="notes">
-						Example for if you want to play along at home
-						Won't be shown in the rest of the talk
-					</aside>
-				</section>
-
-				<section class="center">
-					<h4>github.com/ErnstHaagsman/djangodocker</h4>
-					<p>auth & celery branches</p>
 				</section>
 
 				<section class="center">
