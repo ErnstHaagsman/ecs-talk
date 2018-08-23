@@ -400,21 +400,27 @@
 				</section>
 
 				<section>
-					<h3>Dockerfile</h3>
+					<h3>settings.py</h3>
 					<pre><code data-trim data-noescape>
-						...
+                        def get_env_var(name, required=True, except_commands: Iterable[str]=None) \
+                                -> Union[str, None]:
 
-						COPY requirements.txt /app/requirements.txt
-						RUN pip install -r requirements.txt
+                            if except_commands is None:
+                                except_commands = ['collectstatic']
 
-						ENV SECRET_KEY=INSECURE_PLACEHOLDER \
-							HOST='*' \
-							DB_HOST='PLACEHOLDER' \
-							DB_NAME='PLACEHOLDER' \
-							DB_USER='PLACEHOLDER' \
-							DB_PASSWORD='PLACEHOLDER'
+                            var = os.environ.get(name)
 
-						...
+                            if required and var is None:
+                                ignore = set(except_commands)
+                                matching_commands = ignore.intersection(sys.argv)
+                                if not matching_commands:
+                                    raise KeyError(f"Environment variable {name} if not defined")
+                                else:
+                                    logger.info(f"Required environment variable {name} was ignored, "
+                                                f"as Django was started with {matching_commands}")
+                                    return "PLACEHOLDER"
+
+                            return var
 					</code></pre>
 				</section>
 
